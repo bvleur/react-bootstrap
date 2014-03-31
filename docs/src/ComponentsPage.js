@@ -302,6 +302,20 @@ var ComponentsPage = React.createClass({
                   <p>Auto close after a set time with <code>dismissAfter</code> prop.</p>
                   <ReactPlayground codeText={fs.readFileSync(__dirname + '/../examples/AlertAutoDismissable.js', 'utf8')} />
                 </div>
+
+                {/* Carousels */}
+                <div className="bs-docs-section">
+                  <h1 id="carousels" className="page-header">Carousels <small>Carousel, CarouselItem</small></h1>
+                  <h2 id="carousels-examples">Example carousels</h2>
+
+                  <h3>Uncontrolled</h3>
+                  <p>Allow the component to control its own state.</p>
+                  <ReactPlayground codeText={fs.readFileSync(__dirname + '/../examples/CarouselUncontrolled.js', 'utf8')} exampleClassName="bs-example-tabs" />
+
+                  <h3>Controlled</h3>
+                  <p>Pass down the active state on render via props.</p>
+                  <ReactPlayground codeText={fs.readFileSync(__dirname + '/../examples/CarouselControlled.js', 'utf8')} exampleClassName="bs-example-tabs" />
+                </div>
               </div>
 
               <div className="col-md-3">
@@ -324,6 +338,8 @@ var ComponentsPage = React.createClass({
                     <NavItem href="#progress" key={6}>Progress bars</NavItem>
                     <NavItem href="#navs" key={7}>Navs</NavItem>
                     <NavItem href="#tabs" key={8}>Togglable tabs</NavItem>
+                    <NavItem href="#alerts" key={9}>Alerts</NavItem>
+                    <NavItem href="#carousels" key={10}>Carousels</NavItem>
                   </Nav>
                   <a className="back-to-top" href="#top">
                   Back to top

@@ -66,8 +66,8 @@ var Carousel = React.createClass({
 
     if (nextProps.activeIndex != null && nextProps.activeIndex !== activeIndex) {
       this.setState({
-        previousActiveIndex: this.props.activeIndex,
-        direction: this.getDirection(activeIndex, this.props.activeIndex)
+        previousActiveIndex: activeIndex,
+        direction: this.getDirection(activeIndex, nextProps.activeIndex)
       });
     }
   },
@@ -129,8 +129,8 @@ var Carousel = React.createClass({
     );
   },
 
-  getActiveKey: function () {
-    return this.props.activeKey != null ? this.props.activeKey : this.state.activeKey;
+  getActiveIndex: function () {
+    return this.props.activeIndex != null ? this.props.activeIndex : this.state.activeIndex;
   },
 
   handleItemAnimateOutEnd: function (key) {
@@ -144,10 +144,10 @@ var Carousel = React.createClass({
   },
 
   renderItem: function (child, i) {
-    var activeKey = this.getActiveKey(),
-        isActive = (child.props.key === activeKey),
-        isPreviousActive = this.state.previousActiveKey != null &&
-            this.state.previousActiveKey === child.props.key;
+    var activeIndex = this.getActiveIndex(),
+        isActive = (i === activeIndex),
+        isPreviousActive = this.state.previousActiveIndex != null &&
+            this.state.previousActiveIndex === i;
 
     return utils.cloneWithProps(
         child,
@@ -157,7 +157,7 @@ var Carousel = React.createClass({
           key: child.props.key,
           index: i,
           animateOut: isPreviousActive,
-          animateIn: isActive && this.state.previousActiveKey != null,
+          animateIn: isActive && this.state.previousActiveIndex != null,
           direction: this.state.direction,
           onAnimateOutEnd: isPreviousActive ? this.handleItemAnimateOutEnd: null
         }
@@ -169,21 +169,21 @@ var Carousel = React.createClass({
     return !this._isChanging;
   },
 
-  handleSelect: function (key) {
-    var previousActiveKey;
+  handleSelect: function (index) {
+    var previousActiveIndex;
 
     if (this.props.onSelect) {
       this._isChanging = true;
-      this.props.onSelect(key);
+      this.props.onSelect(index);
       this._isChanging = false;
     }
 
-    if (this.props.activeKey == null && key !== this.getActiveKey()) {
-      previousActiveKey = this.getActiveKey();
+    if (this.props.activeIndex == null && index !== this.getActiveIndex()) {
+      previousActiveIndex = this.getActiveIndex();
       this.setState({
-        activeKey: key,
-        previousActiveKey: previousActiveKey,
-        direction: this.getDirection(previousActiveKey, key)
+        activeIndex: index,
+        previousActiveIndex: previousActiveIndex,
+        direction: this.getDirection(previousActiveIndex, index)
       });
     }
   }

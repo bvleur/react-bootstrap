@@ -1,10 +1,10 @@
 /** @jsx React.DOM */
 
-var key = 1;
+var index = 0;
 
 function renderCarousel () {
   var carouselInstance = (
-    <Carousel activeKey={key} onSelect={handleSelect}>
+    <Carousel activeIndex={index} onSelect={handleSelect}>
       <CarouselItem key={1}>Slide 1</CarouselItem>
       <CarouselItem key={2}>Slide 2</CarouselItem>
     </Carousel>
@@ -12,9 +12,9 @@ function renderCarousel () {
   React.renderComponent(carouselInstance, mountNode);
 }
 
-function handleSelect (selectedKey) {
-  //alert('selected ' + selectedKey);
-  key = selectedKey;
+function handleSelect (selectedIndex) {
+  //alert('selected ' + selectedIndex);
+  index = selectedIndex;
   renderCarousel();
 }
 

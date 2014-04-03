@@ -13,7 +13,7 @@ var CarouselItem = React.createClass({
 
   handleAnimateOutEnd: function () {
     if (typeof this.props.onAnimateOutEnd === 'function') {
-      this.props.onAnimateOutEnd(this.props.key);
+      this.props.onAnimateOutEnd(this.props.index);
     }
   },
 

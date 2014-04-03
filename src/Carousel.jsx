@@ -11,6 +11,9 @@ var Carousel = React.createClass({
   propTypes: {
     slide: React.PropTypes.bool,
     indicators: React.PropTypes.bool,
+    controls: React.PropTypes.bool,
+    pauseOnHover: React.PropTypes.bool,
+    wrap: React.PropTypes.bool,
     onSelect: React.PropTypes.func
   },
 
@@ -18,51 +21,26 @@ var Carousel = React.createClass({
     return {
       slide: true,
       interval: 5000,
-      pause: 'hover',
+      pauseOnHover: true,
       wrap: true
     };
   },
 
   getInitialState: function () {
-    var defaultActiveKey = this.props.defaultActiveKey;
+    var defaultActiveIndex = this.props.defaultActiveIndex;
 
-    if (defaultActiveKey == null) {
-      var children = this.props.children;
-      defaultActiveKey =
-        Array.isArray(children) ? children[0].props.key : children.props.key;
+    if (defaultActiveIndex == null) {
+      defaultActiveIndex = 0;
     }
 
     return {
-      activeKey: defaultActiveKey,
-      previousActiveKey: null,
+      activeIndex: defaultActiveIndex,
+      previousActiveIndex: null,
       direction: null
     };
   },
 
-  getIndexOfChildKey: function (key) {
-    var index;
-
-    if (!this.props.children) {
-      return -1;
-    }
-    if (!Array.isArray(this.props.children)) {
-      return (this.props.children.props.key === key) ?
-        0 : -1;
-    }
-
-    this.props.children.forEach(function (child, i) {
-      if (index === null && child.props.key === key) {
-        index = i;
-      }
-    });
-
-    return index;
-  },
-
-  getDirection: function (activeKey, nextKey) {
-    var indexA = this.getIndexOfChildKey(activeKey);
-    var indexB = this.getIndexOfChildKey(nextKey);
-
+  getDirection: function (indexA, indexB) {
     if (indexA === indexB) {
       return null;
     }
@@ -71,19 +49,38 @@ var Carousel = React.createClass({
       'left' : 'right';
   },
 
-  componentWillReceiveProps: function (nextProps) {
-    var activeKey = this.getActiveKey();
+  getNumberOfItems: function () {
+    if (!this.props.children) {
+      return 0;
+    }
 
-    if (nextProps.activeKey != null && nextProps.activeKey !== activeKey) {
+    if (!Array.isArray(this.props.children)) {
+      return 1;
+    }
+
+    return this.props.children.length;
+  },
+
+  componentWillReceiveProps: function (nextProps) {
+    var activeIndex = this.getActiveIndex();
+
+    if (nextProps.activeIndex != null && nextProps.activeIndex !== activeIndex) {
       this.setState({
-        previousActiveKey: this.props.activeKey,
-        direction: this.getDirection(activeKey, this.props.activeKey)
+        previousActiveIndex: this.props.activeIndex,
+        direction: this.getDirection(activeIndex, this.props.activeIndex)
       });
     }
   },
 
   next: function () {
+    var index = this.getIndexOfChildKey(this.getActiveIndex()),
+        nextActiveIndex;
 
+    index += 1;
+
+    if (nextActiveIndex != null) {
+      this.handleSelect(nextActiveIndex);
+    }
   },
 
   pause: function () {
@@ -93,8 +90,24 @@ var Carousel = React.createClass({
 
   play: function () {
     this.isPaused = false;
-    if (this.props.slide && this.props.interval) {
+    this.waitForNext();
+  },
+
+  waitForNext: function () {
+    if (!this.isPaused && this.props.slide && this.props.interval) {
       setTimeout(this.next, this.props.interval);
+    }
+  },
+
+  handleMouseOver: function () {
+    if (this.props.pauseOnHover) {
+      this.pause();
+    }
+  },
+
+  handleMouseOut: function () {
+    if (this.props.pauseOnHover) {
+      this.play();
     }
   },
 
@@ -126,9 +139,11 @@ var Carousel = React.createClass({
         previousActiveKey: null
       });
     }
+
+    this.waitForNext();
   },
 
-  renderItem: function (child) {
+  renderItem: function (child, i) {
     var activeKey = this.getActiveKey(),
         isActive = (child.props.key === activeKey),
         isPreviousActive = this.state.previousActiveKey != null &&
@@ -140,6 +155,7 @@ var Carousel = React.createClass({
           active: isActive,
           ref: child.props.ref,
           key: child.props.key,
+          index: i,
           animateOut: isPreviousActive,
           animateIn: isActive && this.state.previousActiveKey != null,
           direction: this.state.direction,
@@ -160,7 +176,9 @@ var Carousel = React.createClass({
       this._isChanging = true;
       this.props.onSelect(key);
       this._isChanging = false;
-    } else if (key !== this.getActiveKey()) {
+    }
+
+    if (this.props.activeKey == null && key !== this.getActiveKey()) {
       previousActiveKey = this.getActiveKey();
       this.setState({
         activeKey: key,

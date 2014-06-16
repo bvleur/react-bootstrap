@@ -1,6 +1,10 @@
 export default = {
   getComputedStyles: function (elem) {
-    return elem.ownerDocument.defaultView.getComputedStyle(elem, null);
+    if (('ownerDocument' in elem) && ('defaultView' in elem.ownerDocument)) {
+        return elem.ownerDocument.defaultView.getComputedStyle(elem, null);
+    } else {
+        return window.getComputedStyle(elem, null);
+    }
   },
 
   getOffset: function (DOMNode) {

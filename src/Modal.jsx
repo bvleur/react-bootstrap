@@ -105,11 +105,15 @@ var Modal = React.createClass({
   },
 
   componentDidMount: function () {
-    document.addEventListener('keyup', this.handleDocumentKeyUp);
+    if (document.addEventListener) {
+        document.addEventListener('keyup', this.handleDocumentKeyUp);
+    }
   },
 
   componentWillUnmount: function () {
-    document.removeEventListener('keyup', this.handleDocumentKeyUp);
+    if (document.addEventListener) {
+        document.removeEventListener('keyup', this.handleDocumentKeyUp);
+    }
   },
 
   handleBackdropClick: function (e) {

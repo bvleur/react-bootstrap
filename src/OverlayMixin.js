@@ -55,6 +55,10 @@ export default = {
   },
 
   getContainerDOMNode: function() {
+    if (this.props.containerProvider) {
+        return this.props.containerProvider.getContainerDOMNode();
+    }
+
     return React.isValidComponent(this.props.container) ?
       this.props.container.getDOMNode() : this.props.container;
   }
